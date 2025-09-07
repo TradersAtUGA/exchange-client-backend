@@ -15,5 +15,14 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
+  backend:
+    build: .
+    container_name: client-backend
+    depends_on:
+      - mysql
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
 volumes:
   db_data:
