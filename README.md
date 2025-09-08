@@ -9,6 +9,9 @@ A lightweight, high-performance backend for connecting to market exchanges. Hand
 git clone https://github.com/<your-org>/exchange-client-backend.git
 cd exchange-client-backend
 
-# Start MySQL Docker instance
+# Build images and start services (FastAPI + MySQL)
+docker compose up --build
+
+# (Optional) Run in background (detached mode)
 docker compose up -d
 ```
