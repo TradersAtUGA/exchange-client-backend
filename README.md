@@ -17,6 +17,7 @@ docker compose up -d
 ```
 
 ### Project Structure
+```bash
 app/
   core/         # Configuration & infrastructure (settings, DB session, security)
   models/       # SQLAlchemy ORM models (database tables)
@@ -29,3 +30,4 @@ docker-compose.yml
 Dockerfile
 requirements.txt
 README.md
+```
