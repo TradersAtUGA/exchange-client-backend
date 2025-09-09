@@ -15,3 +15,17 @@ docker compose up --build
 # (Optional) Run in background (detached mode)
 docker compose up -d
 ```
+
+### Project Structure
+app/
+  core/         # Configuration & infrastructure (settings, DB session, security)
+  models/       # SQLAlchemy ORM models (database tables)
+  routers/      # API route definitions (FastAPI APIRouter)
+  schemas/      # Pydantic models for requests & responses
+  main.py       # FastAPI entrypoint
+
+.env            # Environment variables (not committed)
+docker-compose.yml
+Dockerfile
+requirements.txt
+README.md
