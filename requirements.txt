@@ -5,4 +5,5 @@ asyncmy==0.2.9
 cryptography>=41
 pydantic==2.9.2
 pydantic-settings==2.3.4
-
+bcrypt==4.2.0
+email-validator>=2.0.0

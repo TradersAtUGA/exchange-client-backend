@@ -1,5 +1,8 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from app.models.base import Base
+
+
 
 # Get connection string from env (docker-compose passes DATABASE_URL)
 DATABASE_URL = os.environ["DATABASE_URL"]
@@ -23,3 +26,8 @@ AsyncSessionLocal = async_sessionmaker(
 async def get_session() -> AsyncSession:
     async with AsyncSessionLocal() as session:
         yield session
+
+# Initialize database tables
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
