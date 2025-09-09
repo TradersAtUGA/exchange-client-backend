@@ -7,3 +7,7 @@ class UserCreate(BaseModel):
 class UserOut(BaseModel):
     userId: int
     email: EmailStr
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
