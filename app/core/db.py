@@ -1,6 +1,7 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from app.models.base import Base
+import asyncio
 
 
 
@@ -13,6 +14,17 @@ engine = create_async_engine(
     DATABASE_URL,
     pool_pre_ping=True, 
 )
+
+async def wait_for_db(max_retries: int = 10, delay: int = 3):
+    for attempt in range(1, max_retries + 1):
+        try:
+            async with engine.connect() as conn:
+                await conn.execute("SELECT 1")
+                return
+        except Exception:
+            if attempt == max_retries:
+                raise TimeoutError("Timed out waiting for the database to be available")
+            await asyncio.sleep(delay)
 
 # Session factory: callable used to create session objects bound to the engine
 AsyncSessionLocal = async_sessionmaker(

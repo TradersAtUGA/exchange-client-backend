@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Portfolio(Base):
     __tablename__ = "portfolios"
 
-    portfolioId = Column(Integer, primary_key=True, index=True)
+    portfolioId = Column(Integer, primary_key=True, index=True, autoincrement=True)
     userId = Column(Integer, ForeignKey("users.userId"), nullable=False)
     name = Column(String(100), default="My Portfolio")
     description = Column(String(255), nullable=True)
