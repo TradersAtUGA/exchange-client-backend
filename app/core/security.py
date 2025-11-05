@@ -16,9 +16,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 #JWT helpers
 
-def create_token(subject: str | int) -> str:
+def create_token(subject: str | int, refresh: bool = False) -> str:
     """Create a JWT Token for the userId passed as input"""
-    expires = datetime.now() + timedelta(minutes=settings.JWT_EXPIRE_MIN)
+    expires = datetime.now() + timedelta(days=settings.JWT_EXPIRE_DAYS) if refresh else datetime.now() + timedelta(minutes=settings.JWT_EXPIRE_MIN) 
     payload = {"sub":str(subject), "exp":expires}
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
 
@@ -26,5 +26,6 @@ def decode_token(token: str) -> dict | None:
     """Decode JWT token passed as input"""
     try:
         return jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+    
     except JWTError:
         return None
