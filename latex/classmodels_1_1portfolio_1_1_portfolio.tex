@@ -1,0 +1,77 @@
+\doxysection{models.\+portfolio.\+Portfolio Class Reference}
+\hypertarget{classmodels_1_1portfolio_1_1_portfolio}{}\label{classmodels_1_1portfolio_1_1_portfolio}\index{models.portfolio.Portfolio@{models.portfolio.Portfolio}}
+Inheritance diagram for models.\+portfolio.\+Portfolio\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classmodels_1_1portfolio_1_1_portfolio}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classmodels_1_1portfolio_1_1_portfolio_a003f4225d9adc0d114f9eb2e3791f059}{portfolio\+Id}} = Column(Integer, primary\+\_\+key=True, index=True, autoincrement=True)
+\item 
+\mbox{\hyperlink{classmodels_1_1portfolio_1_1_portfolio_adc258908bfe5689194cf5d1eb6fd8266}{user\+Id}} = Column(Integer, Foreign\+Key("{}users.\+user\+Id"{}), nullable=False)
+\item 
+\mbox{\hyperlink{classmodels_1_1portfolio_1_1_portfolio_a87579f2a33380e344fc489abacaf50c2}{name}} = Column(String(100), default="{}My Portfolio"{})
+\item 
+\mbox{\hyperlink{classmodels_1_1portfolio_1_1_portfolio_a67c15c752ba439d2a3c7b3bfc70c3cb0}{description}} = Column(String(255), nullable=True)
+\item 
+\mbox{\hyperlink{classmodels_1_1portfolio_1_1_portfolio_a081106e56772dc33e874fccc771c3df0}{user}} = relationship("{}User"{}, back\+\_\+populates="{}portfolios"{})
+\item 
+\mbox{\hyperlink{classmodels_1_1portfolio_1_1_portfolio_aaedba6164b8aea839a415dbcb5d2e88e}{holdings}} = relationship("{}Holding"{}, back\+\_\+populates="{}portfolio"{}, cascade="{}all, delete-\/orphan"{})
+\item 
+\mbox{\hyperlink{classmodels_1_1portfolio_1_1_portfolio_a091d1aab1a73178703e43e80838d5047}{transactions}} = relationship("{}Transaction"{}, back\+\_\+populates="{}portfolio"{}, cascade="{}all, delete-\/orphan"{})
+\end{DoxyCompactItemize}
+
+
+\label{doc-variable-members}
+\Hypertarget{classmodels_1_1portfolio_1_1_portfolio_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classmodels_1_1portfolio_1_1_portfolio_a67c15c752ba439d2a3c7b3bfc70c3cb0}\index{models.portfolio.Portfolio@{models.portfolio.Portfolio}!description@{description}}
+\index{description@{description}!models.portfolio.Portfolio@{models.portfolio.Portfolio}}
+\doxysubsubsection{\texorpdfstring{description}{description}}
+{\footnotesize\ttfamily \label{classmodels_1_1portfolio_1_1_portfolio_a67c15c752ba439d2a3c7b3bfc70c3cb0} 
+models.\+portfolio.\+Portfolio.\+description = Column(String(255), nullable=True)\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classmodels_1_1portfolio_1_1_portfolio_aaedba6164b8aea839a415dbcb5d2e88e}\index{models.portfolio.Portfolio@{models.portfolio.Portfolio}!holdings@{holdings}}
+\index{holdings@{holdings}!models.portfolio.Portfolio@{models.portfolio.Portfolio}}
+\doxysubsubsection{\texorpdfstring{holdings}{holdings}}
+{\footnotesize\ttfamily \label{classmodels_1_1portfolio_1_1_portfolio_aaedba6164b8aea839a415dbcb5d2e88e} 
+models.\+portfolio.\+Portfolio.\+holdings = relationship("{}Holding"{}, back\+\_\+populates="{}portfolio"{}, cascade="{}all, delete-\/orphan"{})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classmodels_1_1portfolio_1_1_portfolio_a87579f2a33380e344fc489abacaf50c2}\index{models.portfolio.Portfolio@{models.portfolio.Portfolio}!name@{name}}
+\index{name@{name}!models.portfolio.Portfolio@{models.portfolio.Portfolio}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily \label{classmodels_1_1portfolio_1_1_portfolio_a87579f2a33380e344fc489abacaf50c2} 
+models.\+portfolio.\+Portfolio.\+name = Column(String(100), default="{}My Portfolio"{})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classmodels_1_1portfolio_1_1_portfolio_a003f4225d9adc0d114f9eb2e3791f059}\index{models.portfolio.Portfolio@{models.portfolio.Portfolio}!portfolioId@{portfolioId}}
+\index{portfolioId@{portfolioId}!models.portfolio.Portfolio@{models.portfolio.Portfolio}}
+\doxysubsubsection{\texorpdfstring{portfolioId}{portfolioId}}
+{\footnotesize\ttfamily \label{classmodels_1_1portfolio_1_1_portfolio_a003f4225d9adc0d114f9eb2e3791f059} 
+models.\+portfolio.\+Portfolio.\+portfolio\+Id = Column(Integer, primary\+\_\+key=True, index=True, autoincrement=True)\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classmodels_1_1portfolio_1_1_portfolio_a091d1aab1a73178703e43e80838d5047}\index{models.portfolio.Portfolio@{models.portfolio.Portfolio}!transactions@{transactions}}
+\index{transactions@{transactions}!models.portfolio.Portfolio@{models.portfolio.Portfolio}}
+\doxysubsubsection{\texorpdfstring{transactions}{transactions}}
+{\footnotesize\ttfamily \label{classmodels_1_1portfolio_1_1_portfolio_a091d1aab1a73178703e43e80838d5047} 
+models.\+portfolio.\+Portfolio.\+transactions = relationship("{}Transaction"{}, back\+\_\+populates="{}portfolio"{}, cascade="{}all, delete-\/orphan"{})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classmodels_1_1portfolio_1_1_portfolio_a081106e56772dc33e874fccc771c3df0}\index{models.portfolio.Portfolio@{models.portfolio.Portfolio}!user@{user}}
+\index{user@{user}!models.portfolio.Portfolio@{models.portfolio.Portfolio}}
+\doxysubsubsection{\texorpdfstring{user}{user}}
+{\footnotesize\ttfamily \label{classmodels_1_1portfolio_1_1_portfolio_a081106e56772dc33e874fccc771c3df0} 
+models.\+portfolio.\+Portfolio.\+user = relationship("{}User"{}, back\+\_\+populates="{}portfolios"{})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classmodels_1_1portfolio_1_1_portfolio_adc258908bfe5689194cf5d1eb6fd8266}\index{models.portfolio.Portfolio@{models.portfolio.Portfolio}!userId@{userId}}
+\index{userId@{userId}!models.portfolio.Portfolio@{models.portfolio.Portfolio}}
+\doxysubsubsection{\texorpdfstring{userId}{userId}}
+{\footnotesize\ttfamily \label{classmodels_1_1portfolio_1_1_portfolio_adc258908bfe5689194cf5d1eb6fd8266} 
+models.\+portfolio.\+Portfolio.\+user\+Id = Column(Integer, Foreign\+Key("{}users.\+user\+Id"{}), nullable=False)\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+app/models/\mbox{\hyperlink{models_2portfolio_8py}{portfolio.\+py}}\end{DoxyCompactItemize}

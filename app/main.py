@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import health, auth, users
+from app.routers import health, auth, users, portfolios, transactions
 from app.core.config import settings
 from app.core.db import init_db
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,4 +16,5 @@ async def startup_event():
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(users.router)
-
+app.include_router(portfolios.router)
+app.include_router(transactions.router)

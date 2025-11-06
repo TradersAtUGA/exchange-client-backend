@@ -1,0 +1,38 @@
+\chapter{Exchange Client Backend }
+\hypertarget{md__r_e_a_d_m_e}{}\label{md__r_e_a_d_m_e}\index{Exchange Client Backend@{Exchange Client Backend}}
+\label{md__r_e_a_d_m_e_autotoc_md0}%
+\Hypertarget{md__r_e_a_d_m_e_autotoc_md0}%
+
+
+A lightweight, high-\/performance backend for connecting to market exchanges. Handles real-\/time data streaming, order execution, and account management with robust error handling and efficient API integration. Designed for scalability, reliability, and ease of integration into trading systems.\hypertarget{md__r_e_a_d_m_e_autotoc_md1}{}\doxysubsection{\texorpdfstring{Installation}{Installation}}\label{md__r_e_a_d_m_e_autotoc_md1}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\#\ Clone\ the\ repository}
+\DoxyCodeLine{git\ clone\ https://github.com/<your-\/org>/exchange-\/client-\/backend.git}
+\DoxyCodeLine{cd\ exchange-\/client-\/backend}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ Build\ images\ and\ start\ services\ (FastAPI\ +\ MySQL)}
+\DoxyCodeLine{docker\ compose\ up\ -\/-\/build}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ (Optional)\ Run\ in\ background\ (detached\ mode)}
+\DoxyCodeLine{docker\ compose\ up\ -\/d}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md2}{}\doxysubsection{\texorpdfstring{Project Structure}{Project Structure}}\label{md__r_e_a_d_m_e_autotoc_md2}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{app/}
+\DoxyCodeLine{\ \ core/\ \ \ \ \ \ \ \ \ \#\ Configuration\ \&\ infrastructure\ (settings,\ DB\ session,\ security)}
+\DoxyCodeLine{\ \ models/\ \ \ \ \ \ \ \#\ SQLAlchemy\ ORM\ models\ (database\ tables)}
+\DoxyCodeLine{\ \ routers/\ \ \ \ \ \ \#\ API\ route\ definitions\ (FastAPI\ APIRouter)}
+\DoxyCodeLine{\ \ schemas/\ \ \ \ \ \ \#\ Pydantic\ models\ for\ requests\ \&\ responses}
+\DoxyCodeLine{\ \ main.py\ \ \ \ \ \ \ \#\ FastAPI\ entrypoint}
+\DoxyCodeLine{}
+\DoxyCodeLine{.env\ \ \ \ \ \ \ \ \ \ \ \ \#\ Environment\ variables\ (not\ committed)}
+\DoxyCodeLine{docker-\/compose.yml}
+\DoxyCodeLine{Dockerfile}
+\DoxyCodeLine{requirements.txt}
+\DoxyCodeLine{README.md}
+
+\end{DoxyCode}
+ 
