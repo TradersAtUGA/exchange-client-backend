@@ -11,6 +11,17 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/signup", response_model=UserOut, status_code=201)
 async def signup(payload: UserCreate, session: AsyncSession = Depends(get_session)):
+    """
+    @brief Register a new user account.
+
+    Validates that the email is not already in use, hashes the password, persists
+    the user, and returns the created user info.
+
+    @param payload UserCreate The signup payload containing email and password.
+    @param session AsyncSession Database session dependency.
+    @return UserOut The created user with generated userId.
+    @throws HTTPException 409 if the email is already registered.
+    """
     # check if email already exists
     result = await session.execute(select(User).where(User.email == payload.email))
     existing = result.scalar_one_or_none()
@@ -33,6 +44,14 @@ async def signup(payload: UserCreate, session: AsyncSession = Depends(get_sessio
 
 @router.post("/login")
 async def login(payload: UserCreate, session: AsyncSession = Depends(get_session)):
+    """
+    @brief Authenticate a user and issue an access token.
+
+    @param payload UserCreate The login payload containing email and password.
+    @param session AsyncSession Database session dependency.
+    @return Token Access token for authenticated requests.
+    @throws HTTPException 401 if credentials are invalid.
+    """
     result = await session.execute(select(User).where(User.email == payload.email))
     user = result.scalar_one_or_none()
 
