@@ -47,7 +47,8 @@ async def signup(payload: UserCreate, session: AsyncSession = Depends(get_sessio
     return UserOut(userId=user.userId, email=user.email)
 
 @router.post("/login")
-async def login(payload: UserCreate, session: AsyncSession = Depends(get_session)):
+async def login(
+    payload: UserCreate, response: Response, session: AsyncSession = Depends(get_session)):
     """
     @brief Authenticate a user and issue an access token.
 
