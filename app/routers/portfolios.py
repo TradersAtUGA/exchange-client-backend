@@ -34,7 +34,7 @@ async def get_portfolio_holdings(
     result = await session.execute(
         select(Portfolio).where(
             Portfolio.portfolioId == portfolioid,
-            Portfolio.userId == current_user.id  
+            Portfolio.userId == current_user.userId  
         )
     )
     portfolio = result.scalar_one_or_none()
@@ -60,7 +60,7 @@ async def get_portfolio_transactions(
     result = await session.execute(
         select(Portfolio).where(
             Portfolio.portfolioId == portfolioid,
-            Portfolio.userId == current_user.id
+            Portfolio.userId == current_user.userId
         )
     )
     portfolio = result.scalar_one_or_none()
