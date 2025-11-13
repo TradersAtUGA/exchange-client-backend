@@ -1,8 +1,10 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.core.db import get_session
+from app.core.dependencies import get_current_user
 from app.models.user import User
 from app.models.portfolio import Portfolio
 from app.schemas.portfolio import PortfolioCreate, PortfolioOut
@@ -10,45 +12,45 @@ from app.schemas.portfolio import PortfolioCreate, PortfolioOut
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/{userid}/portfolios", response_model=List[PortfolioOut], status_code=200)
-def get_user_portfolios(userid: int, db: Session = Depends(get_session)):
+@router.get("/portfolios", response_model=List[PortfolioOut], status_code=status.HTTP_200_OK)
+async def get_user_portfolios(
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     """
     @brief Retrieve all portfolios for a given user.
-
-    @param userid int The user's identifier.
+m
+    @param user The current user
     @param db Session Database session dependency.
     @return List[PortfolioOut] List of portfolios owned by the user.
-    @throws HTTPException 404 if the user is not found.
+    @throws HTTPException 401 if the user is not found.
     """
-    user = db.get(User, userid) if hasattr(db, "get") else db.query(User).filter(User.userId == userid).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    portfolios = db.query(Portfolio).filter(Portfolio.userId == userid).all()
+    result = await db.scalars(select(Portfolio).where(Portfolio.userId == current_user.userId))
+    portfolios = result.all()
     return portfolios
 
-@router.post("/{userid}/portfolios", response_model=PortfolioOut, status_code=201)
-async def create_user_portfolio(userid: int, portfolio_data: PortfolioCreate, db: Session = Depends(get_session)):
+@router.post("/portfolios", response_model=PortfolioOut, status_code=status.HTTP_201_CREATED)
+async def create_user_portfolio(
+    portfolio_data: PortfolioCreate,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     """
     @brief Create a new portfolio for a user.
 
-    @param userid int The user's identifier for whom the portfolio will be created.
+    @param current_user The current user
     @param portfolio_data PortfolioCreate Payload containing name and description.
     @param db Session Database session dependency.
     @return PortfolioOut The created portfolio record.
-    @throws HTTPException 404 if the user is not found.
+    @throws HTTPException 401 if the user is not found.
     """
-    user = db.get(User, userid) if hasattr(db, "get") else db.query(User).filter(User.userId == userid).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
     new_portfolio = Portfolio(
-        userId=userid,
+        userId=current_user.userId,
         name=portfolio_data.name,
-        description=portfolio_data.description
+        description=portfolio_data.description,
     )
+
     db.add(new_portfolio)
     await db.commit()
     await db.refresh(new_portfolio)
-
     return new_portfolio
