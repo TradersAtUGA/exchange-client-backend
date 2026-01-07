@@ -6,7 +6,8 @@ file
 import quickfix as fix
 import time
 from datetime import datetime
-import order as ord
+import broker.order as ord
+import broker.broker as broker
 
 SOH = chr(1)
 VALID_SIDES = ["BUY", "SELL"]
@@ -98,7 +99,7 @@ class Application(fix.Application):
     # orders to the exchange
     def create_and_send_order(self, side: str, order_type: str, 
                               tif: str, ticker: str, qty: int, 
-                              price: float) -> None:
+                              price: float) -> bool:
         if check_valid_order_args(
             side, order_type, tif, ticker, qty, price
             ):
@@ -115,30 +116,20 @@ class Application(fix.Application):
                 msg.setField(fix.TimeInForce(TIF_MAP[tif]))
 
                 tx_time = fix.TransactTime()
-                tx_time.setString(datetime.utcnow().strftime("%Y%m%d-%H:%M:%S.%f")[:-3])
+                tx_time.setString(datetime.now().strftime("%Y%m%d-%H:%M:%S.%f")[:-3])
                 msg.setField(tx_time) 
 
                 fix.Session.sendToTarget(msg, self.sessionID)
+                return True
         else:
-            pass # TODO:(vikas) reject order here and inform user if fields are invalid 
-            # negative qty, invalid ticker, etc. 
+            return False # order could not be sent or was not formed properly
 
 # sets up broker side server 
 # NOTE: this server should be run on a separate thread in parallel with the 
 # fast API server 
 def main():
-    # change PATH if necessary 
-    settings = fix.SessionSettings("initiator.cfg")
-
-    app = Application()
-    store = fix.FileStoreFactory(settings)
-    log = fix.FileLogFactory(settings)
-
-    initiator = fix.SocketInitiator(app, store, settings, log)
-
-    initiator.start()
-    print("Initiator started")
-
+    app, fix_server = broker.create_fix_server()
+    fix_server.start()
     try:
         while True:
             cmd = input("1 = send order, q = quit: ")
@@ -147,7 +138,7 @@ def main():
             elif cmd == "q":
                 break
     finally:
-        initiator.stop()
+        fix_server.stop()
         print("exit")
 
 if __name__ == "__main__":
