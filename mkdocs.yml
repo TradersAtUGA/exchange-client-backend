@@ -1,0 +1,6 @@
+  site_name: Exchange Broker 
+  plugins:
+    - mkdocstrings
+    - search
+  nav:
+    - Home: docs/index.md
