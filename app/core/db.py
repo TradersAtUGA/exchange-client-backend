@@ -1,6 +1,8 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy import select
 from app.models.base import Base
+from app.models.ticker import Ticker
 import asyncio
 
 
@@ -39,7 +41,33 @@ async def get_session() -> AsyncSession:
     async with AsyncSessionLocal() as session:
         yield session
 
+# Sample ticker data
+SEED_TICKERS = [
+    {"symbol": "AAPL", "name": "Apple Inc."},
+    {"symbol": "MSFT", "name": "Microsoft Corporation"},
+    {"symbol": "GOOGL", "name": "Alphabet Inc."},
+    {"symbol": "AMZN", "name": "Amazon.com Inc."},
+    {"symbol": "TSLA", "name": "Tesla Inc."},
+    {"symbol": "META", "name": "Meta Platforms Inc."},
+    {"symbol": "NVDA", "name": "NVIDIA Corporation"},
+    {"symbol": "JPM", "name": "JPMorgan Chase & Co."},
+    {"symbol": "V", "name": "Visa Inc."},
+    {"symbol": "JNJ", "name": "Johnson & Johnson"},
+]
+
 # Initialize database tables
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    
+    # add ticker data
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Ticker))
+        existing = result.scalars().all()
+        
+        if not existing:
+            for ticker_data in SEED_TICKERS:
+                ticker = Ticker(symbol=ticker_data["symbol"], name=ticker_data["name"])
+                session.add(ticker)
+            
+            await session.commit()
