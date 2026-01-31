@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import health, auth, users, portfolios, transactions
+from app.routers import health, auth, users, portfolios, transactions, ticker
 from app.core.config import settings
 from app.core.db import init_db
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,3 +29,4 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(portfolios.router)
 app.include_router(transactions.router)
+app.include_router(ticker.router)
