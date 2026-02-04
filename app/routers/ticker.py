@@ -21,3 +21,11 @@ async def get_ticker(ticker_id: int, session: AsyncSession = Depends(get_session
     if not ticker:
         raise HTTPException(status_code=404, detail="Ticker not found")
     return ticker
+
+@router.get("/symbol/{symbol}", response_model=TickerOut, status_code=status.HTTP_200_OK)
+async def get_ticker_by_symbol(symbol: str, session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(Ticker).where(Ticker.symbol == symbol))
+    ticker = result.scalar_one_or_none()
+    if not ticker:
+        raise HTTPException(status_code=404, detail="Ticker not found")
+    return ticker
