@@ -4,15 +4,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.transaction import Transaction, TransactionType
 from app.models.portfolio import Portfolio
+from app.models.user import User
 from app.models.holding import Holding
-from app.core.db import get_session
+from app.core.dependencies import get_current_user
 from app.schemas.transaction import TransactionPayload
-from decimal import Decimal
+
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_transaction(payload: TransactionPayload, session: AsyncSession = Depends(get_session)):
+async def create_transaction(
+    payload: TransactionPayload, 
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+    ):
     """
     @brief Create a BUY or SELL transaction and update holdings atomically.
 
@@ -29,14 +34,19 @@ async def create_transaction(payload: TransactionPayload, session: AsyncSession 
     try:
         # Validate portfolio exists
         result = await session.execute(
-            select(Portfolio).where(Portfolio.portfolioId == payload.portfolio_id)
+            select(Portfolio).where(
+                Portfolio.portfolioId == payload.portfolio_id,
+                Portfolio.userId == current_user.userId
+            )
         )
         db_portfolio = result.scalar_one_or_none()
         if not db_portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
         
+        #todo validate if payload attributes match live market data
         total = payload.quantity * payload.price_per_share
 
+        
         # Get holding with row-level lock (SELECT FOR UPDATE)
         result = await session.execute(
             select(Holding)
@@ -50,22 +60,21 @@ async def create_transaction(payload: TransactionPayload, session: AsyncSession 
 
         if payload.type == "BUY":
             if db_holding:
-                old_quantity = float(db_holding.quantity)
-                old_avg_price = float(db_holding.averagePrice)
-                new_quantity = old_quantity + payload.quantity
-                
+                new_quantity = db_holding.quantity + payload.quantity
+
                 # new avg price
-                new_avg_price = ((old_quantity * old_avg_price) + (payload.quantity * payload.price_per_share)) / new_quantity
-                
-                db_holding.quantity = Decimal(str(new_quantity))
-                db_holding.averagePrice = Decimal(str(new_avg_price))
+                new_avg_price = ((db_holding.quantity * db_holding.averagePrice) + (payload.quantity * payload.price_per_share)) / new_quantity      
+
+                db_holding.quantity = new_quantity
+                db_holding.averagePrice = new_avg_price
+
             else:
                 # new holding
                 db_holding = Holding(
                     portfolioId=payload.portfolio_id,
                     ticker_id=payload.ticker_id,
-                    quantity=Decimal(str(payload.quantity)),
-                    averagePrice=Decimal(str(payload.price_per_share))
+                    quantity=payload.quantity,
+                    averagePrice=payload.price_per_share
                 )
                 session.add(db_holding)
         
@@ -73,11 +82,11 @@ async def create_transaction(payload: TransactionPayload, session: AsyncSession 
             if not db_holding:
                 raise HTTPException(status_code=400, detail="No holding found to sell")
             
-            if float(db_holding.quantity) < payload.quantity:
+            if db_holding.quantity < payload.quantity:
                 raise HTTPException(status_code=400, detail="Insufficient quantity to sell")
             
-            new_quantity = float(db_holding.quantity) - payload.quantity
-            db_holding.quantity = Decimal(str(new_quantity))
+            new_quantity = db_holding.quantity - payload.quantity
+            db_holding.quantity = new_quantity
             
             # delete if no more shares left
             if new_quantity == 0:
@@ -87,9 +96,9 @@ async def create_transaction(payload: TransactionPayload, session: AsyncSession 
             portfolioId=payload.portfolio_id,
             ticker_id=payload.ticker_id,
             type=payload.type,
-            quantity=Decimal(str(payload.quantity)),
-            price=Decimal(str(payload.price_per_share)),
-            total=Decimal(str(total)),
+            quantity=payload.quantity,
+            price=payload.price_per_share,
+            total=total,
             timestamp=payload.timestamp
         )
         session.add(new_transaction)
