@@ -3,7 +3,8 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.transaction import Transaction, TransactionType
-from app.models.portfolio import Portfolio, User
+from app.models.portfolio import Portfolio
+from app.models.user import User
 from app.models.holding import Holding
 from app.core.dependencies import get_current_user
 from app.schemas.transaction import TransactionPayload
