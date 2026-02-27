@@ -72,3 +72,5 @@ async def get_portfolio_transactions(
     )
     transactions = result.scalars().all()
     return transactions
+
+
