@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Literal
 import datetime
+from decimal import Decimal
 from app.models.transaction import TransactionType
 
 class TransactionPayload(BaseModel):
@@ -8,7 +9,7 @@ class TransactionPayload(BaseModel):
     portfolio_id: int
     ticker_id: int
     type: Literal["BUY", "SELL"]
-    price_per_share: float = Field(..., gt=0)
+    price_per_share: Decimal = Field(..., gt=0)
     quantity: int = Field(..., gt=0)
     timestamp: datetime.datetime
 

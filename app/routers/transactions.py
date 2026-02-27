@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.transaction import Transaction, TransactionType
+from app.models.ticker import Ticker
 from app.models.portfolio import Portfolio
 from app.models.user import User
 from app.models.holding import Holding
@@ -48,16 +49,18 @@ async def create_transaction(
 
         
         # Get holding with row-level lock (SELECT FOR UPDATE)
-        result = await session.execute(
+        stmt = (
             select(Holding)
             .where(
                 Holding.portfolioId == payload.portfolio_id,
                 Holding.ticker_id == payload.ticker_id
             )
-            .with_for_update()
-        )
+        ).with_for_update()
+
+        result = await session.execute(stmt)
         db_holding = result.scalar_one_or_none()
 
+        
         if payload.type == "BUY":
             if db_holding:
                 new_quantity = db_holding.quantity + payload.quantity
@@ -113,3 +116,4 @@ async def create_transaction(
     except Exception as e:
         await session.rollback()
         raise HTTPException(status_code=500, detail=f"Transaction failed: {str(e)}")
+
