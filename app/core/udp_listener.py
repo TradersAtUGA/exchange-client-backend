@@ -1,6 +1,8 @@
 import asyncio
 import logging
 from typing import Callable, Optional
+import socket
+import struct
 
 logger = logging.getLogger(__name__)
 
@@ -24,17 +26,43 @@ class UDPListener:
         self.message_handler: Optional[Callable] = None
 
     async def start(self):
-        """Start the UDP listener."""
+        """Start the UDP listener (with multicast support)."""
         try:
             loop = asyncio.get_event_loop()
+
+            # Create raw UDP socket
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+
+            # Allow multiple listeners on same port
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+            # Bind to all interfaces on the port
+            sock.bind(("", self.port))
+
+            # ---- MULTICAST CONFIG ----
+            multicast_group = "239.255.0.1"
+
+            # Join multicast group on all interfaces
+            mreq = struct.pack(
+                "4s4s",
+                socket.inet_aton(multicast_group),
+                socket.inet_aton("0.0.0.0"),  # Replace with specific interface if needed
+            )
+
+            sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+            # --------------------------
+
             transport, protocol = await loop.create_datagram_endpoint(
                 lambda: UDPProtocol(self._handle_message),
-                local_addr=(self.host, self.port),
+                sock=sock,
             )
+
             self.transport = transport
             self.protocol = protocol
             self.running = True
-            logger.info(f"UDP listener started on {self.host}:{self.port}")
+
+            logger.info(f"Multicast UDP listener started on {multicast_group}:{self.port}")
+
         except Exception as e:
             logger.error(f"Failed to start UDP listener: {e}")
             raise
