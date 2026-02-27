@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     JWT_EXPIRE_MIN: int = 30
     JWT_EXPIRE_DAYS: int = 3
 
+    #UDP Listener
+    UDP_HOST: str = "239.255.0.1"
+    UDP_PORT: int = 30001
+
     class Config:
         env_file = ".env"
 
