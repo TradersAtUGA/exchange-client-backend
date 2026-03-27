@@ -3,8 +3,9 @@ from app.routers import health, auth, users, portfolios, transactions, ticker
 from app.core.config import settings
 from app.core.db import init_db
 from app.core.udp_listener import init_udp_listener, shutdown_udp_listener, get_udp_listener
+from app.core.market_simulator import start_all_simulators
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.routers import market
 
 app = FastAPI(title=settings.PROJECT_NAME, debug=settings.DEBUG)
 
@@ -26,7 +27,7 @@ async def print_messages(data: bytes, addr: tuple):
 async def startup_event():
     await init_db()
     await init_udp_listener(host=settings.UDP_HOST, port=settings.UDP_PORT)
-    
+    await start_all_simulators()   
     # Set the message handler
     listener = get_udp_listener()
     if listener:
@@ -45,3 +46,5 @@ app.include_router(users.router)
 app.include_router(portfolios.router)
 app.include_router(transactions.router)
 app.include_router(ticker.router)
+app.include_router(market.router)
+
